@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Basic Calculator</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+<body class=" border borderbody p-5 m-5">
+<div class="container text-center mt-5">
+    <h1 class="display-1 ">My Calculator</h1>
+</div>
+
+<div class="container d-flex justify-content-center mt-5">
+    <div class="mr-5 ml-5">
+        <div class="text-center">
+            <p class="font-weight-bold">enter your first number</p>
+            <input type="number" id="digit1" class="number">
+        </div>
+    </div>
+    <div class="mr-5 d-flex justify-content-center position-relative">
+        <button type="button" class="btn btn-info button-size " onclick="doOperation('add')">+</button>
+        <button type="button" class="btn btn-info button-size" onclick="doOperation('subtract')">-</button>
+        <button type="button" class="btn btn-info button-size " onclick="doOperation('multiply')">x</button>
+        <button type="button" class="btn btn-info button-size " onclick="doOperation('divide')">/</button>
+    </div>
+    <div>
+        <div class="text-center mr-3">
+            <p class="font-weight-bold">enter your second number</p>
+            <input type="number" id="digit2" class="number">
+        </div>
+    </div>
+</div>
+<div class="container display-4 text-center mt-5" >Your Answer Is : </div>
+<div class="container text-center font-weight-bold mt-1" id="answer">Answer</div>
+
+<!--script-->
+<script>
+    let digit1,digit2;
+    let object;
+    const url="http://localhost:4200/operate/Operation";
+    let answer;
+
+    function doOperation(command) {
+        this.digit1=document.getElementById("digit1").value;
+        this.digit2=document.getElementById("digit2").value;
+
+        this.object={
+            "digit1": this.digit1,
+            "digit2": this.digit2,
+            "operand": command
+        };
+
+        console.log("Object created : ",this.object);
+
+        if(formValidated())
+            ajaxRequest();
+        else
+            alert("Enter valid data");
+    }
+
+    function formValidated(){
+        if(this.digit1 == '' || this.digit2 == '')
+            return false;
+        else
+            return true;
+    }
+
+    function ajaxRequest() {
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST',url);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState>3 && xhr.status===200) {
+                this.answer=xhr.responseText;
+                console.log(this.answer);
+                document.getElementById("answer").innerHTML=this.answer;
+            }
+        };
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(this.object));
+        return xhr;
+    }
+</script>
+</body>
+<style>
+
+    .number{
+        outline: none;
+    }
+    .button-size{
+        height: 50px;
+        width: 50px;
+        position: relative;
+        top: 30%;
+        margin-right: 20px;
+    }
+    .borderbody{
+        color: black;
+    }
+    #answer{
+        font-size: 2rem;
+    }
+</style>
+</html>
+
